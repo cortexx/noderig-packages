@@ -16,7 +16,7 @@ deb:
 		  --description "Sensision exporter for OS metrics" \
 			--url "https://github.com/runabove/noderig" \
 			--license "BSD-3-Clause" \
-			--version $(shell echo $$(./build/noderig version | awk '{print $$2}')) \
+			--version $(shell echo $$(./build/noderig version | awk '{print $$2}')-$$(lsb_release  -cs)) \
 			-n noderig \
 			-d logrotate \
 			-s dir -t deb \
