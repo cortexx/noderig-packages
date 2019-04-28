@@ -1,4 +1,4 @@
-# Find details at https://github.com/runabove/noderig
+# Find details at https://github.com/ovh/noderig
 
 #cpu: 1  # CPU collector level     (Optional, default: 1)
 #mem: 1  # Memory collector level  (Optional, default: 1)
