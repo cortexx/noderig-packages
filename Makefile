@@ -23,8 +23,7 @@ ifndef VERSION
 	$(error VERSION is not set)
 endif
 	mkdir -p $(BUILD_DIR)
-	wget -P $(BUILD_DIR) https://github.com/ovh/noderig/archive/$(VERSION).zip
-	unzip -q -d $(BUILD_DIR) $(BUILD_DIR)/$(VERSION).zip
+	git clone -b $(VERSION) --single-branch --depth 1 $(REMOTE_REF) $(BUILD_DIR)/noderig-$(VERSION)
 	cd "$(BUILD_DIR)/noderig-$(VERSION)"; make glide-install; make release
 	mv $(BUILD_DIR)/noderig-$(VERSION)/build/noderig $(BUILD_DIR)/
 
