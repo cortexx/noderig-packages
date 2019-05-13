@@ -1,6 +1,7 @@
-BUILD_DIR  := ./build
 REMOTE_REF := "https://github.com/ovh/noderig.git"
 VERSION    ?= $(shell make get-last-release)
+BUILD_DIR  := $(HOME)/go/src/github.com/ovh/noderig
+OUTPUT     := ./package
 
 help: ## Show help message to user
 	@ echo 'Usage: make [target] [VARIABLE]'
@@ -22,10 +23,10 @@ build: clean ## Clean workspace and build a new release of the Noderig project
 ifndef VERSION
 	$(error VERSION is not set)
 endif
-	mkdir -p $(BUILD_DIR)
-	git clone -b $(VERSION) --single-branch --depth 1 $(REMOTE_REF) $(BUILD_DIR)/noderig-$(VERSION)
-	cd "$(BUILD_DIR)/noderig-$(VERSION)"; make glide-install; make release
-	mv $(BUILD_DIR)/noderig-$(VERSION)/build/noderig $(BUILD_DIR)/
+	mkdir -p "$(BUILD_DIR)" "$(OUTPUT)"
+	git clone -b "$(VERSION)" --single-branch --depth 1 "$(REMOTE_REF)" "$(BUILD_DIR)"
+	cd "$(BUILD_DIR)"; make glide-install; make release
+	mv "$(BUILD_DIR)/build/noderig" "$(OUTPUT)"
 
 .PHONY: deb
 deb: ## Build a Debian package
@@ -82,7 +83,8 @@ rpm: ## Build a RPM package
 
 .PHONY: clean
 clean:
-	rm -rf build
+	rm -rf $(BUILD_DIR)
+	rm -rf $(OUTPUT)
 	rm -rf opt
 	rm -f *.deb
 	rm -f *.rpm
