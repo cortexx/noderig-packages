@@ -1,7 +1,7 @@
 REMOTE_REF := "https://github.com/ovh/noderig.git"
 VERSION    ?= $(shell make get-last-release)
-BUILD_DIR  := $(HOME)/go/src/github.com/ovh/noderig
-OUTPUT     := ./package
+BUILD_DIR  := $(GOPATH)/src/github.com/ovh/noderig
+OUTPUT     := ./build
 
 help: ## Show help message to user
 	@ echo 'Usage: make [target] [VARIABLE]'
@@ -28,14 +28,17 @@ endif
 	cd "$(BUILD_DIR)"; make glide-install; make release
 	mv "$(BUILD_DIR)/build/noderig" "$(OUTPUT)"
 
+get-package-release:
+	$(eval BINARY_RELEASE := $(shell echo $$($(OUTPUT)/noderig version | awk '/noderig/ { print $$2 }')))
+
 .PHONY: deb
-deb: ## Build a Debian package
+deb: get-package-release ## Build a Debian package
 	rm -f noderig*.deb
 	fpm -m "<kevin@d33d33.fr>" \
 		--description "Sensision exporter for OS metrics" \
 		--url "https://github.com/ovh/noderig" \
 		--license "BSD-3-Clause" \
-		--version $(shell echo $$(./build/noderig version | awk '{print $$2}')-$$(lsb_release -cs)) \
+		--version $(BINARY_RELEASE) \
 		-n noderig \
 		-d logrotate \
 		-s dir -t deb \
@@ -56,14 +59,14 @@ deb: ## Build a Debian package
 		--inputs deb/input
 
 .PHONY: rpm
-rpm: ## Build a RPM package
+rpm: get-package-release ## Build a RPM package
 	rm -f noderig*.rpm
 	mkdir -p opt/noderig
 	fpm -m "<kevin@d33d33.fr>" \
 		--description "Sensision exporter for OS metrics" \
 		--url "https://github.com/ovh/noderig" \
 		--license "BSD-3-Clause" \
-		--version $(shell echo $$(./build/noderig version | awk '{print $$2}')) \
+		--version $(BINARY_RELEASE) \
 		-n noderig \
 		-d logrotate \
 		-s dir -t rpm \
